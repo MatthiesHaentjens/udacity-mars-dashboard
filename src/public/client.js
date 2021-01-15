@@ -36,7 +36,7 @@ const App = (state) => {
                     explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
                     but generally help with discoverability of relevant imagery.
                 </p>
-                ${ImageOfTheDay(apod)}
+                ${getRoverData({rover: 'Curiosity'})}
             </section>
         </main>
         <footer></footer>
@@ -65,7 +65,7 @@ const Greeting = (name) => {
 
 // Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
-
+    console.log(apod)
     // If image does not already exist, or it is not from today -- request it again
     const today = new Date()
     const photodate = new Date(apod.date)
@@ -77,6 +77,7 @@ const ImageOfTheDay = (apod) => {
     }
 
     // check if the photo of the day is actually type video!
+    
     if (apod.media_type === "video") {
         return (`
             <p>See today's featured video <a href="${apod.url}">here</a></p>
@@ -91,6 +92,7 @@ const ImageOfTheDay = (apod) => {
     }
 }
 
+
 // ------------------------------------------------------  API CALLS
 
 // Example API call
@@ -102,4 +104,21 @@ const getImageOfTheDay = (state) => {
         .then(apod => updateStore(store, { apod }))
 
     return data
+}
+
+const getRoverData = async (rover) => {
+    const res = await fetch(`http://localhost:3000/apod`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(rover),
+    })
+    try {
+        const data = await res.json();
+        console.log(data)
+    } catch (error) {
+        console.log("error:", error);
+    }
 }
