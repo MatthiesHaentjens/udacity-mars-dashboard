@@ -1,14 +1,26 @@
+// state
 let state = {
     user: { name: "Student" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
 
+// rover constructor
+// function Rover(data) {
+//     this.name = data.manifest.photo_manifest.name
+//     this.launchDate = data.manifest.photo_manifest.launch_date
+//     this.landingDate = data.manifest.photo_manifest.launch_date
+//     this.dateLastImage = 
+//     this.status =
+//     this.image = 
+// }
+
 // add our markup to the page
 const root = document.getElementById('root')
 
-const updateStore = (state, newState) => {
+const updateState = (state, newState) => {
     state= Object.assign(state, newState)
+    console.log(state)
     render(root, state)
 }
 
@@ -27,8 +39,8 @@ const App = (state) => {
             ${Greeting(state.user.name)}
             <section>
                 <h3>Select a rover for some cool pictures</h3>
-                <ul id='rover-buttons'>${roverButtons(state)}</ul>
-                
+                <ul id='rover-buttons'>${roverButtons(rovers)}</ul>
+                <div id='rover-card'>${apod === '' ? '' : roverData(apod)}</div>
             </section>
         </main>
         <footer></footer>
@@ -55,65 +67,17 @@ const Greeting = (name) => {
     `
 }
 
-// Why does this return null for the target and a pending promise
-// const x = (rover) => {
-//     const target = document.getElementById('rover-buttons')
-//     const listitem = document.createElement('li')
-//     const roverButton = document.createElement('button')
-//     const list = target.appendChild(listitem)
-//     list.appendChild(list)
-//     roverButton.innerHTML = rover
-//     roverButton.onclick = function() {
-//         alert('Click Click')
-//     }
-// }
-
-// Why doesn't this work incomibination with .map or .forEach
-// const y = (rover) => {
-//     return `<ul><button>${rover}</button><ul>`
-// }
-
-const getData = (rover) => {
-    const roverName = rover.innerHTML
-    alert('Click')
-}
-
-const roverButtons = (state) => {
-    const { rovers } = state
+const roverButtons = (rovers) => {
     if(rovers.length > 0) { 
         return rovers.map(rover => {
-            // Why can't I return this directly but do I need a const as intermediate step?
-            const button = `<li><button id='${rover}' onclick='getData(${rover})'>${rover}</button></li>`
+            const button = `<li><button id='${rover}' onclick='getRoverData(${rover})'>${rover}</button></li>`
             return button
         }).join(' ')
     } else {
         `<h3>Sorry no rovers here</h3>`
     }
-
-    // Why does does it only shows a [object HMTL...] in the DOM and no the ul content
-    // const ul = document.createElement('ul')
-    // const roverButtons = rovers.map(rover => {
-    //     const li = document.createElement('li')
-    //     const button = document.createElement('button')
-    //     button.innerHTML = rover
-    //     button.onclick = function() {
-    //         alert('Click Click')
-    //     }
-    //     li.appendChild(button)
-    //     ul.appendChild(li)
-    // })
-    // return ul
-    
-
-    // Why does this not work?
-    // rovers.length > 0 
-    //     ? rovers.forEach(function(rover) {
-    //         console.log(rover)
-    //         x(rover)
-            // return `<button>${rover}</button>`
-        // })
-        // : `<h3>Sorry no rovers here</h3>`
 }
+
 
 // Example of a pure function that renders infomation requested from the backend
 const ImageOfTheDay = (apod) => {
@@ -144,12 +108,34 @@ const ImageOfTheDay = (apod) => {
     }
 }
 
-const updateUi = async (rover) => {
-    const data = await getRoverData(rover)
 
+const roverData = (data) => {
+    console.log(data)
+    return (`
+        <div>
+            <div>${data.rover.manifest.photo_manifest.name}</div>
+            <div>
+                <div>Launch date: ${data.rover.manifest.photo_manifest.launch_date}</div>
+                <div>Landing date: ${data.rover.manifest.photo_manifest.landing_date}</div>
+                <div>Date last image: ${data.rover.manifest.photo_manifest.max_date}</div>
+                <div>Status: ${data.rover.manifest.photo_manifest.status}</div>
+            </div>
+        </div>
+    `)
 }
 
-// const showRoverImages = ()
+// const createRover = async (data) => {
+//     const target = document.getElementById('rover-card')
+//     const roverData = `<div>I am a rover</div>`
+//     target.appendChild(roverData) 
+// }
+
+// const getRoverData = async (event) => {
+//     const rover = {rover: event.innerHTML}
+//     const apod = await getRoverData(rover)
+//     updateState(state, { apod })
+// }
+
 
 // ------------------------------------------------------  API CALLS
 
@@ -159,12 +145,13 @@ const getImageOfTheDay = (state) => {
 
     fetch(`http://localhost:3000/apod`)
         .then(res => res.json())
-        .then(apod => updateStore(state, { apod }))
+        .then(apod => updateState(state, { apod }))
 
     return data
 }
 
-const getRoverData = async (rover) => {
+const getRoverData = async (event) => {
+    const rover = {rover: event.innerHTML}
     const res = await fetch(`http://localhost:3000/rover`, {
         method: 'POST',
         credentials: 'same-origin',
@@ -174,8 +161,8 @@ const getRoverData = async (rover) => {
         body: JSON.stringify(rover),
     })
     try {
-        const data = await res.json();
-        return data
+        const apod = await res.json();
+        updateState(state, { apod })
     } catch (error) {
         console.log("error:", error);
     }
