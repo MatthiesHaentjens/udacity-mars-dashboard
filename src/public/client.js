@@ -1,4 +1,4 @@
-let store = {
+let state = {
     user: { name: "Student" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
@@ -7,9 +7,9 @@ let store = {
 // add our markup to the page
 const root = document.getElementById('root')
 
-const updateStore = (store, newState) => {
-    store = Object.assign(store, newState)
-    render(root, store)
+const updateStore = (state, newState) => {
+    state= Object.assign(state, newState)
+    render(root, state)
 }
 
 const render = async (root, state) => {
@@ -24,19 +24,11 @@ const App = (state) => {
     return `
         <header></header>
         <main>
-            ${Greeting(store.user.name)}
+            ${Greeting(state.user.name)}
             <section>
-                <h3>Put things on the page!</h3>
-                <p>Here is an example section.</p>
-                <p>
-                    One of the most popular websites at NASA is the Astronomy Picture of the Day. In fact, this website is one of
-                    the most popular websites across all federal agencies. It has the popular appeal of a Justin Bieber video.
-                    This endpoint structures the APOD imagery and associated metadata so that it can be repurposed for other
-                    applications. In addition, if the concept_tags parameter is set to True, then keywords derived from the image
-                    explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
-                    but generally help with discoverability of relevant imagery.
-                </p>
-                ${getRoverData({rover: 'Curiosity'})}
+                <h3>Select a rover for some cool pictures</h3>
+                <ul id='rover-buttons'>${roverButtons(state)}</ul>
+                
             </section>
         </main>
         <footer></footer>
@@ -45,7 +37,7 @@ const App = (state) => {
 
 // listening for load event because page should load before any JS is called
 window.addEventListener('load', () => {
-    render(root, store)
+    render(root, state)
 })
 
 // ------------------------------------------------------  COMPONENTS
@@ -61,6 +53,66 @@ const Greeting = (name) => {
     return `
         <h1>Hello!</h1>
     `
+}
+
+// Why does this return null for the target and a pending promise
+// const x = (rover) => {
+//     const target = document.getElementById('rover-buttons')
+//     const listitem = document.createElement('li')
+//     const roverButton = document.createElement('button')
+//     const list = target.appendChild(listitem)
+//     list.appendChild(list)
+//     roverButton.innerHTML = rover
+//     roverButton.onclick = function() {
+//         alert('Click Click')
+//     }
+// }
+
+// Why doesn't this work incomibination with .map or .forEach
+// const y = (rover) => {
+//     return `<ul><button>${rover}</button><ul>`
+// }
+
+const getData = (rover) => {
+    const roverName = rover.innerHTML
+    alert('Click')
+}
+
+const roverButtons = (state) => {
+    const { rovers } = state
+    if(rovers.length > 0) { 
+        return rovers.map(rover => {
+            // Why can't I return this directly but do I need a const as intermediate step?
+            const button = `<li><button id='${rover}' onclick='getData(${rover})'>${rover}</button></li>`
+            return button
+        }).join(' ')
+    } else {
+        `<h3>Sorry no rovers here</h3>`
+    }
+
+    // Why does does it only shows a [object HMTL...] in the DOM and no the ul content
+    // const ul = document.createElement('ul')
+    // const roverButtons = rovers.map(rover => {
+    //     const li = document.createElement('li')
+    //     const button = document.createElement('button')
+    //     button.innerHTML = rover
+    //     button.onclick = function() {
+    //         alert('Click Click')
+    //     }
+    //     li.appendChild(button)
+    //     ul.appendChild(li)
+    // })
+    // return ul
+    
+
+    // Why does this not work?
+    // rovers.length > 0 
+    //     ? rovers.forEach(function(rover) {
+    //         console.log(rover)
+    //         x(rover)
+            // return `<button>${rover}</button>`
+        // })
+        // : `<h3>Sorry no rovers here</h3>`
 }
 
 // Example of a pure function that renders infomation requested from the backend
@@ -92,6 +144,12 @@ const ImageOfTheDay = (apod) => {
     }
 }
 
+const updateUi = async (rover) => {
+    const data = await getRoverData(rover)
+
+}
+
+// const showRoverImages = ()
 
 // ------------------------------------------------------  API CALLS
 
@@ -101,13 +159,13 @@ const getImageOfTheDay = (state) => {
 
     fetch(`http://localhost:3000/apod`)
         .then(res => res.json())
-        .then(apod => updateStore(store, { apod }))
+        .then(apod => updateStore(state, { apod }))
 
     return data
 }
 
 const getRoverData = async (rover) => {
-    const res = await fetch(`http://localhost:3000/apod`, {
+    const res = await fetch(`http://localhost:3000/rover`, {
         method: 'POST',
         credentials: 'same-origin',
         headers: {
@@ -117,7 +175,7 @@ const getRoverData = async (rover) => {
     })
     try {
         const data = await res.json();
-        console.log(data)
+        return data
     } catch (error) {
         console.log("error:", error);
     }

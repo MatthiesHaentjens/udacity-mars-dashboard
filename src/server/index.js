@@ -49,12 +49,12 @@ const getRoverImages = async (rover) => {
     }
 }
 
-app.post('/apod', async (req, res) => {
+app.post('/rover', async (req, res) => {
     const rover = req.body.rover
     try {
         const manifest = await getRoverManifest(rover)
         const images = await getRoverImages(rover)
-        res.send({images, manifest})
+        res.send({rover: {images, manifest}})
     } catch (error) {
         console.log('error:', error)
     }
