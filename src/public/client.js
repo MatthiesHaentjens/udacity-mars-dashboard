@@ -5,22 +5,11 @@ let state = {
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
 
-// rover constructor
-// function Rover(data) {
-//     this.name = data.manifest.photo_manifest.name
-//     this.launchDate = data.manifest.photo_manifest.launch_date
-//     this.landingDate = data.manifest.photo_manifest.launch_date
-//     this.dateLastImage = 
-//     this.status =
-//     this.image = 
-// }
-
 // add our markup to the page
 const root = document.getElementById('root')
 
 const updateState = (state, newState) => {
     state= Object.assign(state, newState)
-    console.log(state)
     render(root, state)
 }
 
@@ -40,7 +29,10 @@ const App = (state) => {
             <section>
                 <h3>Select a rover for some cool pictures</h3>
                 <ul id='rover-buttons'>${roverButtons(rovers)}</ul>
-                <div id='rover-card'>${apod === '' ? '' : roverData(apod)}</div>
+                <div id='rover-card'>
+                    <div id='rover-data'>${apod === '' ? '' : roverData(apod)}</div>
+                    <div id='rover-images'>${apod === '' ? '' : roverImages(apod)}</div>
+                </div>
             </section>
         </main>
         <footer></footer>
@@ -110,7 +102,6 @@ const ImageOfTheDay = (apod) => {
 
 
 const roverData = (data) => {
-    console.log(data)
     return (`
         <div>
             <div>${data.rover.manifest.photo_manifest.name}</div>
@@ -124,18 +115,15 @@ const roverData = (data) => {
     `)
 }
 
-// const createRover = async (data) => {
-//     const target = document.getElementById('rover-card')
-//     const roverData = `<div>I am a rover</div>`
-//     target.appendChild(roverData) 
-// }
-
-// const getRoverData = async (event) => {
-//     const rover = {rover: event.innerHTML}
-//     const apod = await getRoverData(rover)
-//     updateState(state, { apod })
-// }
-
+const roverImages = (data) => {
+    const images = data.rover.images.photos
+    const src = images.map(img => img.img_src)
+    const srcSet = src.slice(1,11)
+    return srcSet.map(img => {
+        const image = `<img id='rover-image' src='${img}'>`
+        return image
+    }).join('')
+}
 
 // ------------------------------------------------------  API CALLS
 
