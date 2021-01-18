@@ -1,3 +1,4 @@
+@import "resets.css";
 /* -------------------  MOBILE  --------------------- */
 
 body {
@@ -8,12 +9,106 @@ body {
 }
 
 header {
-  /* header styles */
+  width: 100%;
+  text-align: center;
 }
 
 main {
   flex: 1;
-  padding: 20px;
+  padding: 0px 10px 10px 10px;
+}
+
+.logo {
+  height: 150px;
+  display:inline-block;
+  margin: 0 auto;
+}
+
+.title {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  color:  midnightblue;
+  font-size: 26px;
+  font-weight: bolder;
+}
+
+.rover-buttons {
+  display: flex;
+  justify-content: center;
+  margin: 30px 10px 0px 10px; 
+}
+
+.rover-button {
+  background-color: midnightblue;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 10px;
+  margin: 0px 5px 0px 5px;
+  width: 100px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+hr {
+  background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+  border: none;
+  height: 5px;
+  width: 100%;
+  margin: 20px 0px 20px 0px;
+}
+
+.rover-card {
+  /* padding: 0px 10px 10px 10px;  */
+}
+
+#rover-images {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.rover-image {
+  display:inline-block;
+  max-height: 300px;
+  margin: 10px 0px 10px 0px;
+  border-radius: 5px;
+}
+
+#rover-data {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.rover-name {
+  display: flex;
+  background: linear-gradient(90deg, rgba(36,0,0,1) 0%, rgba(154,14,28,1) 49%, rgba(255,0,0,1) 100%);
+  color: white;
+  font-weight: bolder;
+  height: 30px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px 5px 0px 0px;
+}
+
+.rover-facts {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  border: 2px rgba(154,14,28);
+  border-style: none solid solid solid;
+  padding: 5px;
+}
+
+.rover-fact {
+  color: rgba(154,14,28);
+  margin: 0px 5px 0px 5px;
 }
 
 footer {
@@ -22,17 +117,41 @@ footer {
 
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
-  /* use mobile */
+  .rover-facts {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .rover-image {
+    margin: 10px 10px 10px 10px;
+  }
 }
 
 /* -------------------  DESKTOP  -------------------- */
 
 @media (min-width: 1224px) {
-  /* use mobile */
+  .rover-facts {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .rover-image {
+    margin: 10px 10px 10px 10px;
+  }
 }
 
 /* -------------------  LARGE SCREENS  -------------- */
 
 @media (min-width: 1824px) {
-  /* use mobile */
+  .rover-facts {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .rover-image {
+    margin: 10px 10px 10px 10px;
+  }
 }

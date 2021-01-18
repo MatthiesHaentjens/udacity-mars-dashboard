@@ -1,6 +1,5 @@
 // state
 let state = {
-    user: { name: "Student" },
     apod: '',
     rovers: ['Curiosity', 'Opportunity', 'Spirit'],
 }
@@ -17,19 +16,18 @@ const render = async (root, state) => {
     root.innerHTML = App(state)
 }
 
-
 // create content
 const App = (state) => {
     let { rovers, apod } = state
 
     return `
-        <header></header>
+        <header><img class='logo' src='./assets/nasa_logo_animation.gif'/></header>
         <main>
-            ${Greeting(state.user.name)}
             <section>
-                <h3>Select a rover for some cool pictures</h3>
-                <ul id='rover-buttons'>${roverButtons(rovers)}</ul>
-                <div id='rover-card'>
+                <h3 class='title'>Select a rover for some cool pictures</h3>
+                <ul class='rover-buttons'>${roverButtons(rovers)}</ul>
+                <hr>
+                <div class='rover-card'>
                     <div id='rover-data'>${apod === '' ? '' : roverData(apod)}</div>
                     <div id='rover-images'>${apod === '' ? '' : roverImages(apod)}</div>
                 </div>
@@ -46,23 +44,11 @@ window.addEventListener('load', () => {
 
 // ------------------------------------------------------  COMPONENTS
 
-// Pure function that renders conditional information -- THIS IS JUST AN EXAMPLE, you can delete it.
-const Greeting = (name) => {
-    if (name) {
-        return `
-            <h1>Welcome, ${name}!</h1>
-        `
-    }
-
-    return `
-        <h1>Hello!</h1>
-    `
-}
-
+// Adds buttons to the DOM for each rover that is present in state
 const roverButtons = (rovers) => {
     if(rovers.length > 0) { 
         return rovers.map(rover => {
-            const button = `<li><button id='${rover}' onclick='getRoverData(${rover})'>${rover}</button></li>`
+            const button = `<li><button id='${rover}' class='rover-button' onclick='getRoverData(${rover})'>${rover}</button></li>`
             return button
         }).join(' ')
     } else {
@@ -100,29 +86,35 @@ const ImageOfTheDay = (apod) => {
     }
 }
 
-
+// Adds a number of div's to the DOM with the descriptive data for the selected rover
 const roverData = (data) => {
     return (`
-        <div>
-            <div>${data.rover.manifest.photo_manifest.name}</div>
-            <div>
-                <div>Launch date: ${data.rover.manifest.photo_manifest.launch_date}</div>
-                <div>Landing date: ${data.rover.manifest.photo_manifest.landing_date}</div>
-                <div>Date last image: ${data.rover.manifest.photo_manifest.max_date}</div>
-                <div>Status: ${data.rover.manifest.photo_manifest.status}</div>
-            </div>
+        <div class='rover-name'>Rover: ${data.rover.manifest.photo_manifest.name} - Facts:</div>
+        <div class='rover-facts'>
+            <div class='rover-fact'>Launch date: ${data.rover.manifest.photo_manifest.launch_date}</div>
+            <div class='rover-fact'>Landing date: ${data.rover.manifest.photo_manifest.landing_date}</div>
+            <div class='rover-fact' >Date last image: ${data.rover.manifest.photo_manifest.max_date}</div>
+            <div class='rover-fact'>Status: ${data.rover.manifest.photo_manifest.status}</div>
         </div>
     `)
 }
 
+// Adds most recent images of the selected rover to the DOM
 const roverImages = (data) => {
     const images = data.rover.images.photos
     const src = images.map(img => img.img_src)
     const srcSet = src.slice(1,11)
     return srcSet.map(img => {
-        const image = `<img id='rover-image' src='${img}'>`
+        const image = `<img class='rover-image' src='${img}'/>`
         return image
     }).join('')
+}
+
+const customError = () => {
+    return (`
+        <h3>Sorry we couldn't find any data, feel free to try again</h3>
+        <img src='./assets/cute-alien-character.jpg' />
+    `)
 }
 
 // ------------------------------------------------------  API CALLS
@@ -138,6 +130,7 @@ const getImageOfTheDay = (state) => {
     return data
 }
 
+// API call to NASA for data (images and manifest) for the rover selected by the user
 const getRoverData = async (event) => {
     const rover = {rover: event.innerHTML}
     const res = await fetch(`http://localhost:3000/rover`, {
