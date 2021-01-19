@@ -1,10 +1,7 @@
-// import immutable js
-// import { List } from 'immutable';
-
-// state
+// State with a immutable list containing the rovers
 let state = {
     apod: '',
-    rovers: ['Curiosity', 'Opportunity', 'Spirit'],
+    rovers: Immutable.List(['Curiosity', 'Opportunity', 'Spirit']),
 }
 
 // add our markup to the page
@@ -46,30 +43,26 @@ window.addEventListener('load', () => {
 
 // Adds buttons to the DOM for each rover that is present in state
 const roverButtons = (rovers) => {
-    if(rovers.length > 0) { 
+    if(rovers.size > 0) { 
         return rovers.map(rover => {
             const button = `<li><button id='${rover}' class='rover-button' onclick='getRoverData(${rover})'>${rover}</button></li>`
             return button
         }).join(' ')
     } else {
-        `<h3>Sorry no rovers here</h3>`
+        return `<h3>Sorry no rovers here</h3>`
     }
 }
 
-//
-const addRover = async(data) => {
-    // try {
-    const details = roverData(data)
-    const images = await roverImages(data)
-    const DOMelem = `${details.concat(images)}`
-    console.log(DOMelem)
-    return DOMelem
-    // } catch (error) {
-    //     return customError()
-    // }
+// Add data and images to the DOM
+const addRover = (data) => {
+    try {
+        return roverData(data).concat(roverImages(data))
+    } catch (error) {
+        return customError()
+    }
 }
 
-// Adds a number of div's to the DOM with the descriptive data for the selected rover
+// Create DOM elements with the descriptive data for the selected rover
 const roverData = (data) => {
     return (`
         <div id='rover-data'>
@@ -84,25 +77,25 @@ const roverData = (data) => {
     `)
 }
 
-// Adds most recent images of the selected rover to the DOM
-const roverImages = async(data) => {
-    const src = await imageSelector(data, getImageOfTheDay, filterImages)
-    const src1 = src.map(img => `<img class='rover-image' src='${img}'/>`)
-    src1.unshift(`<div id='rover-images'>`)
-    src1.push(`</div>`)
-    const src2 = src1.join('')
-    return src2
+// Create DOM elements with recent images of the selected rover
+const roverImages = (data) => {
+    const src = imageSelector(data, getImageOfTheDay, filterImages)
+    const images = src.map(img => `<img class='rover-image' src='${img}'/>`)
+    images.unshift(`<div id='rover-images'>`)
+    images.push(`</div>`)
+    const DOMelem = images.join('')
+    return DOMelem
 }
 
 // Higher-order function with 3 scenarios for image selection
-const imageSelector = async(data, callback1, callback2) => {
+const imageSelector = (data, callback1, callback2) => {
     const images = data.rover.images.photos
     if(images.length === 0) {
-        const image = await callback1()
+        const image = callback1()
         const src = image.image.hdurl
         return src
     } else if(images.length <= 10) {
-        const src = images.map(img => aimg.img_src)
+        const src = images.map(img => img.img_src)
         return src
     } else {
         const src = callback2(images)

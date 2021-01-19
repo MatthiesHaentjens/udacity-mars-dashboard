@@ -1,7 +1,6 @@
 require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
-const { List } = require('immutable')
 const fetch = require('node-fetch')
 const path = require('path')
 

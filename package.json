@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "jsnd3_mars_dashboard",
   "version": "1.0.0",
   "description": "course project",
